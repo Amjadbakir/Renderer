@@ -7,26 +7,36 @@ template<int T> struct vec{
     double v[T];
     double& operator[](const int i)       { assert(i>=0 && i<T); return v[i]; }
     double  operator[](const int i) const { assert(i>=0 && i<T); return v[i]; }
-    vec operator+(vec& vec) { 
-        vec<T> res;
-        for(int i=0; i<T; i++) res[i] = v[i] + vec[i];
-        return res;
-    }
-    vec operator-(vec& vec) { 
-        vec<T> res;
-        for(int i=0; i<T; i++) res[i] = v[i] - vec[i];
-        return res;
-    }
-    std::ostream& operator<<(std::ostream& out) {
-        for(int i=0; i<T; i++) out << v[i] << " ";
-        return out;
-    }
-    double dot(vec& vec) { 
-        double res = 0;
-        for(int i=0; i<T; i++) res += v[i] * vec[i];
-        return res; 
-    }
 };
+
+template<int T> vec<T> operator+(const vec<T>& a, const vec<T>& b) {
+    vec<T> res;
+    for(int i=0; i<T; i++) res[i] = a[i] + b[i];
+    return res;
+}
+
+template<int T> vec<T> operator-(const vec<T>& a, const vec<T>& b) {
+    vec<T> res;
+    for(int i=0; i<T; i++) res[i] = a[i] - b[i];
+    return res;
+}
+
+template<int T> vec<T> operator/(const vec<T>& a, const double& f) {
+    vec<T> res;
+    for(int i=0; i<T; i++) res[i] = a[i] / f;
+    return res;
+}
+
+template<int T> double dot(const vec<T>& a, const vec<T>& b) {
+    double res = 0;
+    for(int i=0; i<T; i++) res += a[i] * b[i];
+    return res;
+}
+
+template<int T> std::ostream& operator<<(std::ostream& out, const vec<T>& v) {
+    for(int i=0; i<T; i++) out << v[i] << " ";
+    return out;
+}
 
 template<> struct vec<2> {
     double x = 0 ,y = 0;
