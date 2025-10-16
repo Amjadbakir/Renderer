@@ -1,0 +1,61 @@
+# --- CMake (out-of-source) ---
+/build/
+/build-*/
+CMakeFiles/
+/CMakeCache.txt
+cmake-install.cmake
+install_manifest.txt
+Testing/
+CTestTestfile.cmake
+Makefile
+compile_commands.json
+
+# --- Binaries & intermediates ---
+# Compilers: MSVC/MinGW/Clang/GCC
+*.exe
+*.dll
+*.lib
+*.pdb
+*.ilk
+*.idb
+*.exp
+*.obj
+*.o
+*.a
+*.so
+*.dylib
+
+# --- Visual Studio (if you ever generate VS solutions) ---
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.user
+*.vcxproj.filters
+
+# --- VS Code: keep launch/tasks/extensions; ignore everything else ---
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# --- OS junk ---
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+# macOS (in case)
+.DS_Store
+
+# --- Logs & temp ---
+*.log
+*.tmp
+*.cache
+
+# --- Other common build dirs you might use ---
+/out/
+/bin/
+/obj/
+/Debug/
+/Release/
+/x64/
+/x86/
