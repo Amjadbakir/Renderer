@@ -56,7 +56,7 @@ double signed_triangle_area(int ax, int ay, int bx, int by, int cx, int cy) {
     
 }
 
-void triangle(int ax, int ay, int az, int bx, int by, int bz, int cx, int cy, int cz, TGAImage &framebuffer, float (&zbuffer_data)[width][height], TGAColor color) {
+void triangle(int ax, int ay, int az, int bx, int by, int bz, int cx, int cy, int cz, TGAImage &framebuffer, TGAImage &zbuffer, TGAColor color) {
 
     int minX = min({ax, bx, cx});
     int maxX = max({ax, bx, cx});
@@ -73,11 +73,15 @@ void triangle(int ax, int ay, int az, int bx, int by, int bz, int cx, int cy, in
             double gamma = signed_triangle_area(x, y, ax, ay, bx, by) / total_area;
             if (alpha<0 || beta<0 || gamma<0) continue;
 
-            float z = alpha*az + beta*bz + gamma*cz;
-            //if (z <= zbuffer.get(x, y)[0]) continue;
-            //zbuffer.set(x, y, {z});
-            if (z <= zbuffer_data[x][y]) continue;
-            zbuffer_data[x][y] = z;
+            float zz = alpha * az + beta * bz + gamma * cz;
+            if (zz > 255.) {
+                cout << "Warning: zz value " << zz << " clamped to 255." << endl;
+                zz = 255.;
+            }
+            unsigned char z =static_cast<unsigned char>(zz);
+            if (z <= zbuffer.get(x, y)[0]) continue;
+            zbuffer.set(x, y, {z});
+
             framebuffer.set(x, y, color);
         }
     }
@@ -85,10 +89,9 @@ void triangle(int ax, int ay, int az, int bx, int by, int bz, int cx, int cy, in
 
 int main(int argc, char** argv) {
     
+    cout << "Z-buffer data: " << endl;
     TGAImage framebuffer(width, height, TGAImage::RGB);
     TGAImage zbuffer(width, height, TGAImage::GRAYSCALE);
-
-    float zbuffer_data [width][height]= {0.};
 
     Model model(ASSET_DIR "/diablo3_pose.obj");
     for (int i = 0; i < model.nfaces(); i++) {
@@ -104,16 +107,9 @@ int main(int argc, char** argv) {
         int x2 = static_cast<int>((v2.x + 1.) * width / 2.);
         int y2 = static_cast<int>((v2.y + 1.) * height / 2.);
         int z2 = static_cast<int>((v2.z + 1.) * 128.);
-        triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, framebuffer, zbuffer_data, red);
+        triangle(x0, y0, z0, x1, y1, z1, x2, y2, z2, framebuffer, zbuffer, red);
     }
 
-    for(int i=0; i<width; i++) {
-        for(int j=0; j<height; j++) {
-
-            uint8_t g = (uint8_t)std::lround(std::clamp((zbuffer_data[i][j]+1.f)*127.5f, 0.f, 255.f));
-            zbuffer.set(i, j, {g});
-        }
-    }
 
     framebuffer.write_tga_file("framebuffer.tga");
     zbuffer.write_tga_file("zbuffer.tga");
